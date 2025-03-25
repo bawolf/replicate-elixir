@@ -149,16 +149,15 @@ defmodule Replicate.Predictions do
   end
 
   defp send_to_replicate(model, input, webhook_parameters) do
-    [model_owner, model_name] = String.split(model, "/")
-
     body =
       %{
-        "input" => input |> Enum.into(%{})
+        "input" => input |> Enum.into(%{}),
+        "version" => model
       }
       |> Map.merge(webhook_parameters)
       |> Jason.encode!()
 
-    @replicate_client.request(:post, "/v1/models/#{model_owner}/#{model_name}/predictions", body)
+    @replicate_client.request(:post, "/v1/models/predictions", body)
     |> parse_response()
   end
 
